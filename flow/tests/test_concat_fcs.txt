@@ -16,7 +16,7 @@ Concatenating events:
 300.0 events in 3 channels
 
 Writing events:
-"flow_concat.fcs"
+"tests_concat.fcs"
 4,159 B on disk
 300 events in 3 channels
 

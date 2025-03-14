@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
-Date:       2025-03-13
+Date:       2025-03-14
 Version:    0.1
 """
 
@@ -23,6 +23,9 @@ import os
 import flowio as fio
 import numpy as np
 
+# check if tests are running
+pytest_running = "PYTEST_CURRENT_TEST" in os.environ
+
 # set fixed random seed
 np.random.seed(42)
 
@@ -30,7 +33,7 @@ np.random.seed(42)
 cells = 100
 channels = ["Chan_A", "Chan_B", "Chan_C", "Chan_D"]
 files = 3
-flow_path = r"./"
+flow_path = r"./" if not pytest_running else r"./tests/"
 
 # write data
 for i in range(files):
@@ -49,9 +52,7 @@ for i in range(files):
             pass
     flow_data = array.array("f", cells_chans.reshape(-1))  # flatten
     with open(
-        os.path.abspath(
-            os.path.join(os.path.abspath(flow_path), "test_" + str(i + 1) + ".fcs")
-        ),
+        os.path.abspath(os.path.join(flow_path, "test_" + str(i + 1) + ".fcs")),
         "wb",
     ) as data_file:
         fio.create_fcs(

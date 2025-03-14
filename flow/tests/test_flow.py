@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
-Date:       2025-03-13
+Date:       2025-03-14
 Version:    0.1
 """
 
@@ -39,7 +39,7 @@ class TestCreateFCS:
         # check output files
         for file in range(3):
             flow_path = os.path.abspath(
-                os.path.join("./test_" + str(file + 1) + ".fcs")
+                os.path.join("./tests/test_" + str(file + 1) + ".fcs")
             )
             assert os.path.exists(flow_path)
             # read flow data headers
@@ -81,11 +81,11 @@ class TestCreateFCS:
             text=True,
         )
         # check output file
-        concat_path = os.path.abspath("../flow_concat.fcs")
+        concat_path = os.path.abspath("./tests/tests_concat.fcs")
         assert os.path.exists(concat_path)
         # check terminal output
         with open(
-            os.path.abspath("./tests/concat_fcs.log"), "r", encoding="utf-8"
+            os.path.abspath("./tests/test_concat_fcs.txt"), "r", encoding="utf-8"
         ) as lf:
             concat_fcs_expected = lf.read()
         assert concat_fcs_result.stdout == concat_fcs_expected
@@ -93,6 +93,6 @@ class TestCreateFCS:
     def test_cleanup(self):
         for file in range(3):
             os.remove(
-                os.path.abspath(os.path.join("./test_" + str(file + 1) + ".fcs"))
+                os.path.abspath(os.path.join("./tests/test_" + str(file + 1) + ".fcs"))
             )  # flow_path
-        os.remove(os.path.abspath("../flow_concat.fcs"))  # concat_path
+        os.remove(os.path.abspath("./tests/tests_concat.fcs"))  # concat_path
