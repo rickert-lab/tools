@@ -1,5 +1,5 @@
 """
-`create_fcs` - create flow cytometry files for testing
+create_fcs - create flow cytometry files for testing
 Copyright (C) 2025 The Regents of the University of Colorado
 
 This program is free software: you can redistribute it and/or modify it under
@@ -23,9 +23,6 @@ import os
 import flowio as fio
 import numpy as np
 
-# check if tests are running
-pytest_running = "PYTEST_CURRENT_TEST" in os.environ
-
 # set fixed random seed
 np.random.seed(42)
 
@@ -33,7 +30,7 @@ np.random.seed(42)
 cells = 100
 channels = ["Chan_A", "Chan_B", "Chan_C", "Chan_D"]
 files = 3
-flow_path = r"./" if not pytest_running else r"./tests/"
+flow_path = r"./tests"
 
 # write data
 for i in range(files):
