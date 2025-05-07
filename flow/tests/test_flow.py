@@ -1,5 +1,5 @@
 """
-`test_flow` - tests for flow repository
+test_flow - tests for flow repository
 Copyright (C) 2025 The Regents of the University of Colorado
 
 This program is free software: you can redistribute it and/or modify it under
