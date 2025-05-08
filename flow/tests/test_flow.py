@@ -63,7 +63,8 @@ class TestCreateFCS:
                         "mean": [9.082659, 2.395619, 1.448949, 4.894528, 9.856505],
                     }
                 )
-                pd.testing.assert_frame_equal(csv_frame.head(), head_expected)
+                head_result = csv_frame.head()
+                pd.testing.assert_frame_equal(head_result, head_expected)
             # cleanup
             os.remove(csv_path)
 
@@ -78,31 +79,35 @@ class TestCreateFCS:
             # read flow data headers
             flow_data = fio.FlowData(flow_path)
             assert flow_data.event_count == 100, "Cell count is not 100."
-            flow_chans = [chan["PnN"] for chan in flow_data.channels.values()]
+            flow_chans_result = [chan["PnN"] for chan in flow_data.channels.values()]
             match f:
                 case 0:
-                    assert flow_chans == [
+                    flow_chans_expected = [
                         "Chan_A",
                         "Chan_B",
                         "Chan_C",
                         "Chan_D",
                     ]
+                    assert flow_chans_result == flow_chans_expected
                 case 1:
-                    assert flow_chans == [
+                    flow_chans_expected = [
                         "Chan_A",
                         "Chan_B",
                         "Chan_C",
                         "Chan_D",
                         "Chan_E",  # extra
                     ]
+
+                    assert flow_chans_result == flow_chans_expected
                 case 2:
-                    assert flow_chans == [
+                    flow_chans_expected = [
                         "Chan_A",
                         "Chan_B",
                         "Chan_C",
                         "Chan_C",  # wrong
                         "Chan_E",  # extra
                     ]
+                    assert flow_chans_result == flow_chans_expected
                 case _:
                     assert False
             # cleanup
@@ -119,7 +124,7 @@ class TestCreateFCS:
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-        )
+        ).stdout
         # check output file
         concat_path = os.path.abspath("./tests/tests_concat.fcs")
         assert os.path.exists(concat_path)
@@ -128,7 +133,7 @@ class TestCreateFCS:
             os.path.abspath("./tests/test_concat_fcs.txt"), "r", encoding="utf-8"
         ) as lf:
             concat_fcs_expected = lf.read()
-        assert concat_fcs_result.stdout == concat_fcs_expected
+        assert concat_fcs_result == concat_fcs_expected
         # cleanup
         for f in range(3):
             os.remove(
@@ -178,10 +183,9 @@ class TestCreateFCS:
                 fcs_path = os.path.abspath(os.path.join(base_path + "_annots.fcs"))
                 assert os.path.exists(fcs_path)
                 fcs_data = fio.FlowData(fcs_path)
+                chans_result = [chan["PnN"] for chan in fcs_data.channels.values()]
                 chans_expected = ["index", "tissue", "area", "mean"]
-                assert [
-                    chan["PnN"] for chan in fcs_data.channels.values()
-                ] == chans_expected
+                assert chans_result == chans_expected
                 events_expected = array.array(
                     "f",
                     [
@@ -207,7 +211,8 @@ class TestCreateFCS:
                         9.856504440307617,
                     ],
                 )
-                assert fcs_data.events[:20] == events_expected
+                events_result = fcs_data.events[:20]
+                assert events_result == events_expected
                 assert fcs_data.event_count == 100, "Cell count is not 100."
             # cleanup
             os.remove(os.path.abspath(base_path + ".csv"))
@@ -229,9 +234,9 @@ class TestCreateFCS:
             csv_path = os.path.abspath(os.path.join(base_path + ".csv"))
             assert os.path.exists(csv_path)
             if f == 0:
-                channels_expected = ["Chan_A", "Chan_B", "Chan_C", "Chan_D"]
                 # check csv content
                 with open(csv_path, "r") as csv_file:
+                    channels_expected = ["Chan_A", "Chan_B", "Chan_C", "Chan_D"]
                     channels_result = csv_file.readline().strip().split(",")
                     assert channels_result == channels_expected
                     events_expected = np.array(
