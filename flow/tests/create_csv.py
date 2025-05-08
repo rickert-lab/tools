@@ -19,6 +19,7 @@ Version:    0.1
 """
 
 import os
+
 import pandas as pd
 import numpy as np
 
@@ -28,16 +29,20 @@ np.random.seed(42)
 # set parameters
 cells = 100
 csv_path = r"./tests"
+files = 3
 
-# write data
-csv_data = {
-    "index": np.arange(cells, dtype=np.int32),
-    "tissue": np.random.choice(["stroma", "tumor"], size=cells),
-    "area": np.random.rand(cells) * 100,  # random floats between 0 and 1000
-    "mean": np.random.rand(cells) * 10,  # random floats between 0 and 10
-}
-csv_frame = pd.DataFrame(csv_data)
-with open(os.path.abspath(os.path.join(csv_path, "test.csv")), "w") as csv_file:
-    csv_frame.to_csv(
-        csv_file, header=True, index=False
-    )  # keep header, ignore Pandas' index
+for i in range(files):
+    # write data
+    csv_data = {
+        "index": np.arange(cells, dtype=np.int32),
+        "tissue": np.random.choice(["stroma", "tumor"], size=cells),
+        "area": np.random.rand(cells) * 100,  # random floats between 0 and 1000
+        "mean": np.random.rand(cells) * 10,  # random floats between 0 and 10
+    }
+    csv_frame = pd.DataFrame(csv_data)
+    with open(
+        os.path.abspath(os.path.join(csv_path, "test_" + str(i + 1) + ".csv")), "w"
+    ) as csv_file:
+        csv_frame.to_csv(
+            csv_file, header=True, index=False
+        )  # keep header, ignore Pandas' index
