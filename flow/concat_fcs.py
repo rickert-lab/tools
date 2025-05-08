@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
-Date:       2025-03-14
+Date:       2025-05-07
 Version:    0.1
 """
 
@@ -24,6 +24,7 @@ import math
 import os
 import sys
 import warnings
+
 import flowio as fio
 import numpy as np
 

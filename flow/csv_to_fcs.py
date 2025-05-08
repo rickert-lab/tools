@@ -1,5 +1,5 @@
 """
-csv_to_fcs - convert comma-separated value files to flow cytometry files
+csv_to_fcs - convert comma-separated value to flow cytometry files
 Copyright (C) 2025 The Regents of the University of Colorado
 
 This program is free software: you can redistribute it and/or modify it under
@@ -28,7 +28,7 @@ import pandas as pd
 # check if tests are running
 pytest_running = "PYTEST_CURRENT_TEST" in os.environ
 
-# get flow file paths
+# get csv file paths
 csv_path = (
     os.path.abspath(r"./") if not pytest_running else os.path.abspath(r"./tests/")
 )
