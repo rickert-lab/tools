@@ -19,8 +19,8 @@ Version:    0.1
 """
 
 import json
-import os
 import fnmatch
+import os
 
 import flowio as fio
 import pandas as pd

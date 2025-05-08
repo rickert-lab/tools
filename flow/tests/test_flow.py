@@ -59,7 +59,13 @@ class TestCreateFCS:
                     {
                         "index": [0, 1, 2, 3, 4],
                         "tissue": ["stroma", "tumor", "stroma", "stroma", "stroma"],
-                        "area": [96.958463, 77.513282, 93.949894, 89.482735, 59.789998],
+                        "area [μm²]": [
+                            96.958463,
+                            77.513282,
+                            93.949894,
+                            89.482735,
+                            59.789998,
+                        ],
                         "mean": [9.082659, 2.395619, 1.448949, 4.894528, 9.856505],
                     }
                 )
@@ -167,7 +173,13 @@ class TestCreateFCS:
                     {
                         "index": [0, 1, 2, 3, 4],
                         "tissue": ["stroma", "tumor", "stroma", "stroma", "stroma"],
-                        "area": [96.958463, 77.513282, 93.949894, 89.482735, 59.789998],
+                        "area [μm²]": [
+                            96.958463,
+                            77.513282,
+                            93.949894,
+                            89.482735,
+                            59.789998,
+                        ],
                         "mean": [9.082659, 2.395619, 1.448949, 4.894528, 9.856505],
                     }
                 )
@@ -184,7 +196,7 @@ class TestCreateFCS:
                 assert os.path.exists(fcs_path)
                 fcs_data = fio.FlowData(fcs_path)
                 chans_result = [chan["PnN"] for chan in fcs_data.channels.values()]
-                chans_expected = ["index", "tissue", "area", "mean"]
+                chans_expected = ["index", "tissue", "area [μm²]", "mean"]
                 assert chans_result == chans_expected
                 events_expected = array.array(
                     "f",

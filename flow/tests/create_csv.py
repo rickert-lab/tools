@@ -36,7 +36,7 @@ for i in range(files):
     csv_data = {
         "index": np.arange(cells, dtype=np.int32),
         "tissue": np.random.choice(["stroma", "tumor"], size=cells),
-        "area": np.random.rand(cells) * 100,  # random floats between 0 and 1000
+        "area [μm²]": np.random.rand(cells) * 100,  # random floats between 0 and 100
         "mean": np.random.rand(cells) * 10,  # random floats between 0 and 10
     }
     csv_frame = pd.DataFrame(csv_data)
