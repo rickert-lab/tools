@@ -1,5 +1,5 @@
-# python>=3.7
-flowio
+# python>=3.9,<=3.13
+flowio>=1.4
 pandas
 pyarrow
 pytest

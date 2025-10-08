@@ -14,10 +14,10 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
-Date:       2025-05-07
+Date:       2025-10-08
 DOI:        10.5281/zenodo.17298096
 URL:        https://github.com/rickert-lab/tools
-Version:    0.1
+Version:    0.2
 """
 
 import array
@@ -32,19 +32,6 @@ import numpy as np
 
 from datetime import datetime
 
-# check if tests are running
-pytest_running = "PYTEST_CURRENT_TEST" in os.environ
-
-# get flow file paths
-flow_path = (
-    os.path.abspath(r"./") if not pytest_running else os.path.abspath(r"./tests/")
-)
-time_stamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
-concat_path = os.path.join(
-    flow_path if not pytest_running else r"./tests",
-    f"{os.path.basename(flow_path)}{'_' + time_stamp + '_' if not pytest_running else '_'}concat.fcs",
-)
-
 
 def cons_idxs(flow_chans, consens_chans):
     """Return the indices of all flow channels matchting the consensus channels by index and name.
@@ -55,9 +42,9 @@ def cons_idxs(flow_chans, consens_chans):
     """
     return sorted(
         [
-            int(pos) - 1
+            pos - 1  # integer
             for pos, chan in flow_chans.items()
-            if int(pos) in consens_chans and get_name(chan) == consens_chans[int(pos)]
+            if pos in consens_chans and get_name(chan) == consens_chans[pos]
         ]
     )
 
@@ -91,12 +78,27 @@ def get_name(channel):
     Keyword arguments:
     channels - the flowio channel dictionary
     """
-    return channel.get("PnS", channel["PnN"])
+    return (
+        channel.get("pns") or channel["pnn"]
+    )  # 'pns' value must be True, i.e. it must differ from "", None, False
 
 
 def min_warning(message, category, filename, lineno, line=None):
     return f"\n{category.__name__}: {message}\n"
 
+
+# check if tests are running
+pytest_running = "PYTEST_CURRENT_TEST" in os.environ
+
+# get flow file paths
+flow_path = (
+    os.path.abspath(r"./") if not pytest_running else os.path.abspath(r"./tests/")
+)
+time_stamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+concat_path = os.path.join(
+    flow_path if not pytest_running else r"./tests",
+    f"{os.path.basename(flow_path)}{'_' + time_stamp + '_' if not pytest_running else '_'}concat.fcs",
+)
 
 # set warning parameters
 warnings.formatwarning = min_warning  # category and message
@@ -123,11 +125,11 @@ if flow_paths_len:
         flow_chans = flow_data.channels
 
         # track consensus channels
-        consens_chans.update(  # pos: {'N', 'PnN', 'PnS'}
+        consens_chans.update(  # pos: {'n', 'pnn', 'pns'}
             dict(
                 sorted(
                     {
-                        int(pos): {"N": 0, **chan}
+                        pos: {"n": 0, **chan}
                         for pos, chan in flow_chans.items()
                         if get_name(chan)
                         not in [get_name(cons) for cons in consens_chans.values()]
@@ -137,24 +139,21 @@ if flow_paths_len:
         )
         # check names at positions
         for pos, chan in flow_chans.items():
-            pos = int(pos)
             if pos in consens_chans and get_name(consens_chans[pos]) == get_name(chan):
-                consens_chans[pos]["N"] += 1  # matching label at same position
+                consens_chans[pos]["n"] += 1  # matching label at same position
             else:
                 warnings.warn(
-                    f'"{os.path.basename(flow_path)}" @{pos} = "{chan["PnN"]}"\n'
-                    f'"{get_name(consens_chans[pos])}" (consensus) => "{get_name(chan)}" (non-consensus)'
+                    f'"{os.path.basename(flow_path)}" @{pos} = "{chan["pnn"]}"'
                 )
-
     # remove non-consensus channels
-    nonsens_chans = {  # pos: 'PnS'|'PnN'
-        pos: chan.get("PnS", chan["PnN"])
+    nonsens_chans = {  # pos: 'pns'|'pnn'
+        pos: get_name(chan)
         for pos, chan in consens_chans.items()
-        if chan["N"] < flow_paths_len
+        if chan["n"] < flow_paths_len
     }
     print(f"\nRemoving channels:\n{nonsens_chans}")
-    consens_chans = {  # pos: 'PnS'|'PnN'
-        pos: chan.get("PnS", chan["PnN"])
+    consens_chans = {  # pos: 'pns'|'pnn'
+        pos: get_name(chan)
         for pos, chan in consens_chans.items()
         if get_name(chan) not in nonsens_chans.values()
     }
@@ -203,9 +202,9 @@ if flow_paths_len:
             assert consens_chans == dict(
                 sorted(
                     {
-                        int(pos): chan.get("PnS", chan["PnN"])
+                        pos: get_name(chan)
                         for pos, chan in flow_chans.items()
-                        if int(pos) - 1 in flow_idxs
+                        if pos - 1 in flow_idxs
                     }.items()
                 )
             ), "Channels do not match consensus."

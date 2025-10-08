@@ -14,10 +14,10 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
-Date:       2025-05-07
+Date:       2025-10-08
 DOI:        10.5281/zenodo.17298096
 URL:        https://github.com/rickert-lab/tools
-Version:    0.1
+Version:    0.2
 """
 
 import os
@@ -25,14 +25,6 @@ import fnmatch
 
 import flowio as fio
 import numpy as np
-
-# check if tests are running
-pytest_running = "PYTEST_CURRENT_TEST" in os.environ
-
-# get fcs file paths
-fcs_path = (
-    os.path.abspath(r"./") if not pytest_running else os.path.abspath(r"./tests/")
-)
 
 
 def get_files(path="", pat="*", anti="", recurse=False):
@@ -56,6 +48,27 @@ def get_files(path="", pat="*", anti="", recurse=False):
     return file_list
 
 
+def get_name(channel):
+    """Get channel label from flowio channel dictionary.
+    Try to retrieve the optional long name first and
+    if that fails try to get the short name.
+
+    Keyword arguments:
+    channels - the flowio channel dictionary
+    """
+    return (
+        channel.get("pns") or channel["pnn"]
+    )  # 'pns' value must be True, i.e. it must differ from "", None, False
+
+
+# check if tests are running
+pytest_running = "PYTEST_CURRENT_TEST" in os.environ
+
+# get fcs file paths
+fcs_path = (
+    os.path.abspath(r"./") if not pytest_running else os.path.abspath(r"./tests/")
+)
+
 # collect fcs file names
 fcs_paths = sorted(get_files(path=os.path.abspath(fcs_path), pat="*.fcs", anti=""))
 fcs_paths_len = len(fcs_paths)
@@ -68,7 +81,7 @@ for count, fcs_path in enumerate(fcs_paths):
 
     # read fcs data
     fcs_data = fio.FlowData(fcs_path)
-    fcs_chans = [chan["PnN"] for chan in fcs_data.channels.values()]
+    fcs_chans = [get_name(chan) for chan in fcs_data.channels.values()]
 
     # reshape fcs data
     fcs_events = np.reshape(

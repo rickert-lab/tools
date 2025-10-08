@@ -58,5 +58,5 @@ for i in range(files):
         fio.create_fcs(
             data_file,
             event_data=flow_data,
-            channel_names=channels,
+            channel_names=channels,  # added as 'pnn' labels
         )

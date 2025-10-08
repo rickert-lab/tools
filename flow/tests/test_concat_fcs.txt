@@ -1,7 +1,6 @@
 Checking channels:
 1.3
 UserWarning: "test_3.fcs" @4 = "Chan_C"
-"Chan_D" (consensus) => "Chan_C" (non-consensus)
 
 Removing channels:
 {4: 'Chan_D', 5: 'Chan_E'}

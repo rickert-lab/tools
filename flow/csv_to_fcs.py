@@ -14,10 +14,10 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
-Date:       2025-05-07
+Date:       2025-10-08
 DOI:        10.5281/zenodo.17298096
 URL:        https://github.com/rickert-lab/tools
-Version:    0.1
+Version:    0.2
 """
 
 import json
@@ -26,14 +26,6 @@ import os
 
 import flowio as fio
 import pandas as pd
-
-# check if tests are running
-pytest_running = "PYTEST_CURRENT_TEST" in os.environ
-
-# get csv file paths
-csv_path = (
-    os.path.abspath(r"./") if not pytest_running else os.path.abspath(r"./tests/")
-)
 
 
 def get_files(path="", pat="*", anti="", recurse=False):
@@ -56,6 +48,14 @@ def get_files(path="", pat="*", anti="", recurse=False):
             break  # from `os.walk()`
     return file_list
 
+
+# check if tests are running
+pytest_running = "PYTEST_CURRENT_TEST" in os.environ
+
+# get csv file paths
+csv_path = (
+    os.path.abspath(r"./") if not pytest_running else os.path.abspath(r"./tests/")
+)
 
 # collect csv file names
 csv_paths = sorted(
@@ -130,8 +130,6 @@ for count, csv_path in enumerate(csv_paths):
     ) as fcs_file:
         fio.create_fcs(
             fcs_file,
-            event_data=csv_frame.to_numpy(
-                dtype="float64"
-            ).ravel(),  # cast to array.array('f,) in flowio
+            event_data=csv_frame.to_numpy(dtype="float64").ravel(),
             channel_names=[col for col in csv_frame.columns],
         )

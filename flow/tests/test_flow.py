@@ -14,10 +14,10 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
-Date:       2025-05-07
+Date:       2025-10-08
 DOI:        10.5281/zenodo.17298096
 URL:        https://github.com/rickert-lab/tools
-Version:    0.1
+Version:    0.2
 """
 
 import array
@@ -87,7 +87,9 @@ class TestCreateFCS:
             # read flow data headers
             flow_data = fio.FlowData(flow_path)
             assert flow_data.event_count == 100, "Cell count is not 100."
-            flow_chans_result = [chan["PnN"] for chan in flow_data.channels.values()]
+            flow_chans_result = [
+                chan.get("pns") or chan["pnn"] for chan in flow_data.channels.values()
+            ]
             match f:
                 case 0:
                     flow_chans_expected = [
@@ -197,7 +199,10 @@ class TestCreateFCS:
                 fcs_path = os.path.abspath(os.path.join(base_path + "_annots.fcs"))
                 assert os.path.exists(fcs_path)
                 fcs_data = fio.FlowData(fcs_path)
-                chans_result = [chan["PnN"] for chan in fcs_data.channels.values()]
+                chans_result = [
+                    chan.get("pns") or chan["pnn"]
+                    for chan in fcs_data.channels.values()
+                ]
                 chans_expected = ["index", "tissue", "area [μm²]", "mean"]
                 assert chans_result == chans_expected
                 events_expected = array.array(
