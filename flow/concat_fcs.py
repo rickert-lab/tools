@@ -112,7 +112,7 @@ flow_paths = sorted(
 flow_paths_len = len(flow_paths)
 if flow_paths_len:
     print("Checking channels:")
-    consens_chans = {}
+    pos_data = {}  # {pos: {'name': str, 'count': int}}
     for count, flow_path in enumerate(flow_paths):
         # print progress
         if not (count + 1) % 100 or count == 0 or (count + 1) == flow_paths_len:
@@ -124,41 +124,33 @@ if flow_paths_len:
         flow_data = fio.FlowData(flow_path, only_text=True)
         flow_chans = flow_data.channels
 
-        # track consensus channels
-        consens_chans.update(  # pos: {'n', 'pnn', 'pns'}
-            dict(
-                sorted(
-                    {
-                        pos: {"n": 0, **chan}
-                        for pos, chan in flow_chans.items()
-                        if get_name(chan)
-                        not in [get_name(cons) for cons in consens_chans.values()]
-                    }.items()
-                )
-            )
-        )
-        # check names at positions
+        # track channel positions and names
         for pos, chan in flow_chans.items():
-            if pos in consens_chans and get_name(consens_chans[pos]) == get_name(chan):
-                consens_chans[pos]["n"] += 1  # matching label at same position
+            chan_name = get_name(chan)
+            if pos not in pos_data:
+                pos_data[pos] = {"name": chan_name, "count": 0}
+            if pos_data[pos]["name"] == chan_name:
+                pos_data[pos]["count"] += 1
             else:
                 warnings.warn(
                     f'"{os.path.basename(flow_path)}" @{pos} = "{chan["pnn"]}"'
                 )
-    # remove non-consensus channels
-    nonsens_chans = {  # pos: 'pns'|'pnn'
-        pos: get_name(chan)
-        for pos, chan in consens_chans.items()
-        if chan["n"] < flow_paths_len
+
+    # separate consensus from non-consensus channels
+    consens_chans = {
+        pos: data["name"]
+        for pos, data in pos_data.items()
+        if data["count"] == flow_paths_len
     }
-    print(f"\nRemoving channels:\n{nonsens_chans}")
-    consens_chans = {  # pos: 'pns'|'pnn'
-        pos: get_name(chan)
-        for pos, chan in consens_chans.items()
-        if get_name(chan) not in nonsens_chans.values()
+    nonsens_chans = {
+        pos: data["name"]
+        for pos, data in pos_data.items()
+        if data["count"] < flow_paths_len
     }
-    print(f"\nKeeping channels:\n{consens_chans}")
     consens_count = len(consens_chans)
+
+    print(f"\nRemoving channels:\n{nonsens_chans}")
+    print(f"\nKeeping channels:\n{consens_chans}")
 
     # confirm processing
     if nonsens_chans:
