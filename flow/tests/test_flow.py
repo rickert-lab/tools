@@ -15,6 +15,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
 Date:       2025-05-07
+DOI:        10.5281/zenodo.17298096
+URL:        https://github.com/rickert-lab/tools
 Version:    0.1
 """
 
