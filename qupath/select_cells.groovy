@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
-Date:       2025-10-17
+Date:       2025-10-31 👻
 DOI:        10.5281/zenodo.17298096
 URL:        https://github.com/rickert-lab/tools
 Version:    0.1
@@ -82,4 +82,15 @@ def selectCellsByAreaRange(areaRange) {
            minArea + ' and ' + String.format('%.1f', maxArea) + ' ' + unit + '.')
 }
 resetSelection()
-selectCellsByAreaRange([0])  // all cells (no lower or upper limit)
+selectCellsByAreaRange([0, 100])  // inclusive interval
+
+// select a single cell by its object ID
+def objectID = 'a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6'
+def cell = getDetectionObjects().find { it.getID().toString() == objectID }
+if (cell) {
+    selectObjects(cell)
+    println "Selected cell with object ID: ${cell.getID()}"
+} else {
+    println "Cell not found: $objectID"
+}
+
