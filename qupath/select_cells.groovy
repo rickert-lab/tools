@@ -82,7 +82,7 @@ def selectCellsByAreaRange(areaRange) {
            minArea + ' and ' + String.format('%.1f', maxArea) + ' ' + unit + '.')
 }
 resetSelection()
-selectCellsByAreaRange([0, 100])  // inclusive interval
+selectCellsByAreaRange([0.0, 100.0])  // inclusive interval
 
 // select a single cell by its object ID
 def objectID = 'a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6'
