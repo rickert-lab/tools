@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
 Author:     Christian Rickert <christian.rickert@cuanschutz.edu>
-Date:       2025-12-02
+Date:       2025-12-03
 DOI:        10.5281/zenodo.17298096
 URL:        https://github.com/rickert-lab/tools
 Version:    0.1
@@ -32,7 +32,7 @@ Setting up variables and functions for the script: nothing to do here!
 
 // set variables used for classification
 def unclassifiedClassName = 'Unclassified'  // create manually and set white
-def classifiedCells = null  // empty array to store cells
+def waitTime = 1000  // increase value [ms] if screen redraw is too slow
 
 // select cells by class (classification) names
 def selectCellsByClassNames(classNames) {
@@ -74,6 +74,7 @@ don't make it into the consecutive rounds of phenotyping:
 // begin: set all cells to the unclassified class
 selectCells()
 setSelectedCellsToClass(unclassifiedClassName)
+def classifiedCells = null  // empty array to store cells
 
 // first step: classify for phenotype combination 1 (chan1+: chan2-)
 selectCellsByClassNames([unclassifiedClassName])
@@ -106,6 +107,9 @@ Cleaning up hierarchy and selection after phenotyping.
 */
 
 // make sure all cells are located in their parent annotations
+// may throw a `java.util.ConcurrentModificationException' if
+// the hierarchy is changed before the screen redraw completed
+Thread.sleep(waitTime)
 resolveHierarchy()
 
 // clear selection to show cell classification colors
